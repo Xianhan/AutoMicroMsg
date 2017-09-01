@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Message">
+<!-- reseultMap对应类名 -->
+  <resultMap type="com.bean.Message" id="MessageResult">
+  <!-- 以下表结构与实体类对象对应 -->
+    <id column="id" jdbcType="INTEGER" property="id"/><!-- 主键用id标签 -->
+    <result column="command" jdbcType="VARCHAR" property="command"/>
+    <result column="description" jdbcType="VARCHAR" property="description"/>
+    <result column="content" jdbcType="VARCHAR" property="content"/>
+  </resultMap>
+<!-- 与上面 resultMap 对应 parameterType="xxx"为传参，只能传一个 -->
+  <select id="queryMessageList" parameterType="com.bean.Message" resultMap="MessageResult">
+    select id,command,description,content from message where 1=1
+  <if test="command!=null and !&quot;&quot;.equals(command.trim())">and command like '%' #{command} '%'</if><!--&quot;&quot;是双引号。代表空字符串-->
+  <if test="description!=null and !&quot;&quot;.equals(description.trim())">and description like '%' #{description} '%'</if>
+  </select>
+  
+  <delete id="deleteOne" parameterType="int">
+  	delete from message where id=#{_parameter}
+  </delete>
+	<delete id="deleteBatch" parameterType="java.util.List">
+  	delete from message where id in(
+  		<foreach collection="list" item="item" separator=","><!-- separator=","逗号为分隔符 -->
+  		#{item}
+  		</foreach>
+  	)
+  	
+  </delete>
+</mapper>
